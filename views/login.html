@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - TROK Service Auditorias</title>
+<style>
+  :root{ --azul:#0d3b66; --azul2:#1259a5; --cinza:#f4f6f8; --borda:#dfe4ea; --vermelho:#c0392b; }
+  *{box-sizing:border-box;}
+  body{
+    font-family:'Segoe UI', Arial, sans-serif; margin:0; min-height:100vh; background:var(--cinza);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .box{ background:#fff; border:1px solid var(--borda); border-radius:10px; padding:32px; width:100%; max-width:340px; box-shadow:0 8px 24px rgba(0,0,0,0.08); }
+  h1{ font-size:1.15rem; color:var(--azul); margin:0 0 4px; }
+  p.sub{ color:#5a6572; font-size:0.85rem; margin:0 0 20px; }
+  label{ display:block; font-size:0.8rem; font-weight:600; margin:0 0 6px; color:#4a5568; }
+  input{ width:100%; padding:10px 12px; border:1px solid var(--borda); border-radius:6px; font-size:0.95rem; }
+  button{ width:100%; margin-top:16px; background:var(--azul2); color:#fff; border:none; padding:11px; border-radius:6px; font-weight:600; font-size:0.95rem; cursor:pointer; }
+  button:hover{ opacity:0.9; }
+  .erro{ color:var(--vermelho); font-size:0.85rem; margin-top:10px; min-height:1.2em; }
+</style>
+</head>
+<body>
+  <form class="box" id="loginForm">
+    <h1>TROK Service — Controle de Auditorias</h1>
+    <p class="sub">Digite a senha da equipe para acessar.</p>
+    <label for="senha">Senha</label>
+    <input type="password" id="senha" name="senha" autofocus autocomplete="current-password" required>
+    <button type="submit">Entrar</button>
+    <div class="erro" id="erro"></div>
+  </form>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const senha = document.getElementById('senha').value;
+      const erroEl = document.getElementById('erro');
+      erroEl.textContent = '';
+      try {
+        const resp = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ senha })
+        });
+        const data = await resp.json();
+        if (resp.ok && data.ok) {
+          window.location.href = '/';
+        } else {
+          erroEl.textContent = data.error || 'Senha incorreta.';
+        }
+      } catch (err) {
+        erroEl.textContent = 'Erro ao conectar ao servidor.';
+      }
+    });
+  </script>
+</body>
+</html>
